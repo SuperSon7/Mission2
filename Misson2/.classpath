@@ -7,6 +7,5 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="C:/Users/PC/eclipse/java-2024-06/eclipse/plugins/org.eclipse.equinox.launcher_1.6.800.v20240513-1750.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
