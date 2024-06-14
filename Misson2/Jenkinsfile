@@ -1,10 +1,16 @@
 pipeline {
     agent any
+    environment {
+        // JUnit 라이브러리 경로 설정
+        JUNIT_JAR = 'C:\\path\\to\\junit-platform-console-standalone-1.7.1.jar'
+    }
     stages {
         stage('Checkout') {
             steps {
                 // 소스 코드 체크아웃
                 checkout scm
+                // 디렉토리 구조 확인
+                bat 'dir'
             }
         }
         stage('Build') {
@@ -21,9 +27,18 @@ pipeline {
             steps {
                 script {
                     // JUnit 5 테스트 실행을 위한 classpath 설정
-                    def classpath = "test-classes;classes;lib;C:\\path\\to\\eclipse\\plugins\\junit-platform-console-standalone-1.7.1.jar"
+                    def classpath = "test-classes;classes;${env.JUNIT_JAR}"
                     // JUnit 5 테스트 실행
-                    bat "java -cp ${classpath} org.junit.platform.console.ConsoleLauncher --scan-classpath > test_results.txt"
+                    bat "java -cp ${classpath} org.junit.platform.console.ConsoleLauncher --scan-classpath --reports-dir=test-results > test_results.txt"
+                }
+            }
+        }
+        stage('Performance Test') {
+            steps {
+                // 성능 테스트 실행
+                script {
+                    // 성능 테스트 스크립트가 있다고 가정
+                    bat "java -cp ${classpath} org.example.performance.PerformanceTest > performance_results.txt"
                 }
             }
         }
@@ -31,7 +46,7 @@ pipeline {
     post {
         always {
             // 테스트 결과 파일을 저장하기 위해 아카이브
-            archiveArtifacts 'test_results.txt'
+            archiveArtifacts artifacts: 'test_results.txt, performance_results.txt', allowEmptyArchive: true
         }
         failure {
             echo 'Build or test failed'
