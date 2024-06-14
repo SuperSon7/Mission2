@@ -15,7 +15,7 @@ pipeline {
             steps {
                 // PowerShell을 사용하여 모든 Java 파일을 나열하고 컴파일
                 powershell '''
-                $files = Get-ChildItem -Path Mission2\\src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+                $files = Get-ChildItem -Path Misson2\\src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
                 javac -encoding UTF-8 -d classes $files
                 '''
             }
