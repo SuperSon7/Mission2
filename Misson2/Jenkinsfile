@@ -1,9 +1,6 @@
 pipeline {
     agent any
-    environment {
-        // JUnit 라이브러리 경로 설정
-        JUNIT_JAR = 'C:\\path\\to\\junit-platform-console-standalone-1.7.1.jar'
-    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -25,24 +22,15 @@ pipeline {
         }
         stage('Test') {
             steps {
-                script {
-                    // JUnit 5 테스트 실행을 위한 classpath 설정
-                    def classpath = "test-classes;classes;${env.JUNIT_JAR}"
-                    // JUnit 5 테스트 실행
-                    bat "java -cp ${classpath} org.junit.platform.console.ConsoleLauncher --scan-classpath > test_results.txt"
-                }
+                // JUnit 5 테스트 실행을 위한 classpath 설정
+                def classpath= "classes;lib/;path/to/eclipse/plugins/junit-platform-console-standalone-1.7.1.jar"                
+// JUnit 5 테스트 실행
+                bat 'java -cp classes;lib/; path/to/eclipse/plugins/junit-platform-console-standalone-1.7.1.jar org.junit.platform.console.ConsoleLauncher--scan-classpath> test_results.txt'  
             }
         }
-        stage('Performance Test') {
-            steps {
-                // 성능 테스트 실행
-                script {
-                    // 성능 테스트 스크립트가 있다고 가정
-                    bat "java -cp ${classpath} org.example.performance.PerformanceTest > performance_results.txt"
-                }
-            }
-        }
+                
     }
+    
     post {
         always {
             // 테스트 결과 파일을 저장하기 위해 아카이브
