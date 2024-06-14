@@ -19,7 +19,7 @@ pipeline {
                     // 일반 클래스 파일 컴파일
                     bat 'javac -encoding UTF-8 -d classes Misson2\\src\\BookManager.java'
                     // 테스트 클래스 파일 컴파일 (JUnit JAR 파일을 클래스패스에 포함)
-                    bat "javac -encoding UTF-8 -d test-classes -classpath classes;${env.JUNIT_JAR} Misson2\\src\\BookManagerTest.java"
+                    bat "javac -encoding UTF-8 -d test-classes -classpath classes;\"${env.JUNIT_JAR}\" Misson2\\src\\BookManagerTest.java"
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     // JUnit 5 테스트 실행을 위한 classpath 설정
-                    def classpath = "test-classes;classes;${env.JUNIT_JAR}"
+                    def classpath = "test-classes;classes;\"${env.JUNIT_JAR}\""
                     // JUnit 5 테스트 실행
                     bat "java -cp ${classpath} org.junit.platform.console.ConsoleLauncher --scan-classpath > test_results.txt"
                 }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     // 성능 테스트를 위한 클래스패스 설정
-                    def classpath = "test-classes;classes;${env.JUNIT_JAR}"
+                    def classpath = "test-classes;classes;\"${env.JUNIT_JAR}\""
                     // 성능 테스트 실행
                     bat "java -cp ${classpath} org.example.performance.PerformanceTest > performance_results.txt"
                 }
