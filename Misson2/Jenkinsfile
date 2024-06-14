@@ -6,6 +6,7 @@ pipeline {
         JUNIT_API_JAR = 'C:\\opt\\eclipse\\plugins\\org.junit.jupiter.api_5.7.1.jar'
         JUNIT_ENGINE_JAR = 'C:\\opt\\eclipse\\plugins\\org.junit.jupiter.engine_5.7.1.jar'
         JUNIT_PARAMS_JAR = 'C:\\opt\\eclipse\\plugins\\org.junit.jupiter.params_5.7.1.jar'
+        APACHE_COMMONS_JAR = 'C:\\path\\to\\your\\apache\\commons-lang3-3.11.jar'  // 필요시 추가적인 라이브러리 경로
     }
     stages {
         stage('Checkout') {
@@ -20,10 +21,12 @@ pipeline {
             steps {
                 // PowerShell을 사용하여 모든 Java 파일을 나열하고 컴파일
                 powershell '''
-                $junitClasspath = "${env.JUNIT_API_JAR};${env.JUNIT_ENGINE_JAR};${env.JUNIT_PARAMS_JAR}"
-                $files = Get-ChildItem -Path .\\Misson2\\src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
-                if ($files -ne $null) {
-                    javac -encoding UTF-8 -d classes -classpath $junitClasspath $files
+                $classpath = "${env.JUNIT_API_JAR};${env.JUNIT_ENGINE_JAR};${env.JUNIT_PARAMS_JAR};${env.APACHE_COMMONS_JAR};."
+                $files = Get-ChildItem -Path .\\Misson2\\src -Recurse -Filter *.java | ForEach-Object { $_.FullName } -join " "
+                if ($files) {
+                    $cmd = "javac -encoding UTF-8 -d classes -classpath $classpath $files"
+                    Write-Host "Running: $cmd"
+                    & cmd /c $cmd
                 } else {
                     Write-Error "No Java files found."
                 }
@@ -34,7 +37,7 @@ pipeline {
             steps {
                 script {
                     // JUnit 5 테스트 실행을 위한 classpath 설정
-                    def classpath = "classes;lib;${env.ECLIPSE_JUNIT_JAR};${env.JUNIT_API_JAR};${env.JUNIT_ENGINE_JAR};${env.JUNIT_PARAMS_JAR}"
+                    def classpath = "classes;lib;${env.ECLIPSE_JUNIT_JAR};${env.JUNIT_API_JAR};${env.JUNIT_ENGINE_JAR};${env.JUNIT_PARAMS_JAR};${env.APACHE_COMMONS_JAR}"
                     // JUnit 5 테스트 실행
                     bat "java -cp ${classpath} org.junit.platform.console.ConsoleLauncher --scan-classpath > test_results.txt"
                 }
